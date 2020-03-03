@@ -43,3 +43,4 @@ StyleCop.Cache
 UpgradeLog.htm
 .idea
 appsettings.json
+appsettings.Development.json
