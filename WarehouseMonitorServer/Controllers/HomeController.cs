@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WarehouseMonitorServer.Models.CWMS3000;
+using WarehouseMonitorServer.Models.CWMS3000.Contexts;
 using Microsoft.EntityFrameworkCore;
+using LinqKit;
+using System.Collections.Generic;
 
 namespace WarehouseMonitorServer.Controllers
 {
@@ -16,36 +17,24 @@ namespace WarehouseMonitorServer.Controllers
         public IActionResult Index()
         {
             DateTime NowDate = DateTime.Now;
-            const bool activeStock = true;
-            var stock = Context.Stock.AsQueryable();
-
-            if (activeStock)
+            IQueryable<Stock> stock = Context.Stock;
+            stock = stock.Include(s => s.Nomenklatura).ThenInclude(n => n.UnitNoms);
+            stock = stock.Include(s => s.Contragent);
+            stock = stock.Include(s => s.CellAdress);
+            stock = stock.Where(s => s.Cnt > 0 && NowDate > s.StartDate && NowDate < s.EndDate);
+           // stock = stock.Where(s => s.Nomenklatura.Id == 26909);
+            var stocklist = stock.ToList();
+           
+            var predicate = PredicateBuilder.New<DicData>();
+            foreach (var item in stocklist.First().GetCodeDicData())
             {
-               stock = stock.Where(s => s.Typ.Up == 416 &&
-                                    (s.Typ.Code == 1 ||
-                                     s.Typ.Code == 3 ||
-                                     s.Typ.Code == 5 ||
-                                     s.Typ.Code == 10 ||
-                                     s.Typ.Code == 12 ||
-                                     s.Typ.Code == 13));//трансформируеться в in
+                predicate = predicate.Or(p => p.Up == item);
             }
 
-            stock = stock
-                   .Include(s => s.Nomenklatura)
-                   .Include(s => s.Contragent)
-                   .Include(s => s.CellAdress)
-                   .Include(s => s.Typ);
+            IEnumerable<DicData> dicDatas = Context.DicData.Where(predicate).ToList();
 
-            //var stock1 = stock.Select(s => new
-            //{
-            //    CodeNom = s.Nomenklatura.Code,
-            //    NameNom = s.Nomenklatura.Name,
-            //    s.Cnt,
-            //    s.Typ.Term
-            //}).ToList();
-
-
-           var stockList = stock.ToList();
+            foreach (var item in stocklist) 
+                item.SetDicData(dicDatas.ToList());
 
             return View();
         }

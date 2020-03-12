@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WarehouseMonitorServer.Models.CWMS3000
+namespace WarehouseMonitorServer.Models.CWMS3000.Contexts
 {
     public class CWMSContext : DbContext
     {
@@ -20,6 +20,12 @@ namespace WarehouseMonitorServer.Models.CWMS3000
         {
             DateTime NowDate = DateTime.Now;
             modelBuilder.Entity<Stock>().HasQueryFilter(s => s.Cnt > 0 && NowDate > s.StartDate && NowDate < s.EndDate);
+           // modelBuilder.Entity<UnitNom>().HasQueryFilter(unitNom =>NowDate > unitNom.StartDate && NowDate < unitNom.EndDate);
+        }
+
+        public CWMSContext()
+        {
+
         }
     }
 }

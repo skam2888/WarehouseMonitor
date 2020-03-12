@@ -13,15 +13,32 @@ namespace WarehouseMonitorServer.Models.CWMS3000
         [Key]
         [Column("N")]
         public int? Id { get; set; }
+
         [Column("FD")]
-        public DateTime? StartDate { get; set; }
+        public DateTime? StartDate { get; set;}
+
         [Column("TD")]
         public DateTime? EndDate { get; set; }
+
         [Column("BRIEF")]
         public string Brief { get; set; }
+
         [Column("NAME")]
         public string Name { get; set; }
+
         [Column("AUTO_RESERVE_GRP")] 
         public int? AutoResrvGroup { get; set; }
+
+        public Contragent SetContr(Contragent contragent)
+        {
+            Id = contragent.Id; 
+            StartDate = contragent.StartDate;
+            EndDate = contragent.EndDate;
+            Brief = contragent.Brief;
+            Name = contragent.Name; 
+            AutoResrvGroup = contragent.AutoResrvGroup;
+
+            return this;
+        }
     }
 }

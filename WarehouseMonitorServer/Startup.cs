@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using WarehouseMonitorServer.Models.CWMS3000;
+using WarehouseMonitorServer.Models.CWMS3000.Contexts;
 
 namespace WarehouseMonitorServer
 {
